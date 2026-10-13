@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul & LKPD Konversi Skala Suhu - MTsN 1 Kota Malang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <header class="bg-emerald-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-emerald-700 p-2 rounded-xl font-bold shadow">
+                    <i class="fa-solid fa-temperature-three-quarters text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg md:text-xl">MTsN 1 Kota Malang</h1>
+                    <p class="text-xs text-emerald-200">Modul Interaktif & LKPD Konversi Skala Suhu | Siti Fatimah, S.Pd</p>
+                </div>
+            </div>
+            <div id="nav-user-info" class="hidden flex items-center space-x-3">
+                <span id="nav-username" class="text-sm font-medium bg-emerald-800 px-3 py-1 rounded-full"></span>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-2 rounded-lg transition">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- LOGIN VIEW -->
+        <section id="view-login" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 border border-slate-100 my-10">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl font-bold shadow-inner">
+                    <i class="fa-solid fa-atom"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">Portal Belajar IPA Kelas 7</h2>
+                <p class="text-sm text-slate-500 mt-1">Silakan masuk sesuai peran Anda</p>
+            </div>
+
+            <div class="flex bg-slate-100 p-1 rounded-xl mb-6">
+                <button onclick="switchLoginTab('siswa')" id="tab-btn-siswa" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-emerald-700 shadow transition">Siswa</button>
+                <button onclick="switchLoginTab('admin')" id="tab-btn-admin" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-500 transition">Guru / Admin</button>
+            </div>
+
+            <!-- Form Siswa -->
+            <form id="form-login-siswa" onsubmit="handleLoginSiswa(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Nama Lengkap Siswa</label>
+                    <input type="text" id="siswa-nama" required placeholder="Contoh: Ahmad Fauzan" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Kelas</label>
+                    <select id="siswa-kelas" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition text-sm bg-white">
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="VII A">VII A</option>
+                        <option value="VII B">VII B</option>
+                        <option value="VII C">VII C</option>
+                        <option value="VII D">VII D</option>
+                        <option value="VII E">VII E</option>
+                        <option value="VII F">VII F</option>
+                        <option value="VII G">VII G</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Nomor Presensi (Password)</label>
+                    <input type="password" id="siswa-password" required placeholder="Masukkan nomor presensi (mis: 12)" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition text-sm">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition">
+                    Mulai Belajar & Mengerjakan
+                </button>
+            </form>
+
+            <!-- Form Admin -->
+            <form id="form-login-admin" onsubmit="handleLoginAdmin(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Username Admin</label>
+                    <input type="text" id="admin-username" required value="admin" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Password</label>
+                    <input type="password" id="admin-password" required value="mtsn1malang" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition text-sm">
+                </div>
+                <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 rounded-xl shadow-lg transition">
+                    Masuk Panel Guru
+                </button>
+                <p class="text-xs text-center text-slate-400 mt-2">Default: username <b>admin</b>, password <b>mtsn1malang</b></p>
+            </form>
+        </section>
+
+        <!-- DASHBOARD SISWA -->
+        <section id="view-siswa" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-2xl p-6 shadow-lg flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold">Selamat Datang, <span id="welcome-name"></span>!</h2>
+                    <p class="text-emerald-100 text-sm mt-1">Kelas: <span id="welcome-class"></span> | Guru Pengampu: Siti Fatimah, S.Pd</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex gap-2">
+                    <button onclick="switchStudentTab('materi')" class="student-nav-btn bg-white text-emerald-700 px-4 py-2 rounded-xl font-medium text-sm shadow transition active-tab">Modul Materi</button>
+                    <button onclick="switchStudentTab('simulasi')" class="student-nav-btn bg-emerald-800/60 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-medium text-sm transition">Simulasi & LKPD</button>
+                    <button onclick="switchStudentTab('evaluasi')" class="student-nav-btn bg-emerald-800/60 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-medium text-sm transition">Evaluasi (15 Soal)</button>
+                </div>
+            </div>
+
+            <!-- Tab 1: Materi -->
+            <div id="student-tab-materi" class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3 border-b pb-2"><i class="fa-solid fa-book-open text-emerald-600 mr-2"></i>Bab III: Mengenal dan Memanfaatkan Suhu, Kalor, serta Pemuaian</h3>
+                    
+                    <div class="prose max-w-none text-slate-600 space-y-4 text-sm leading-relaxed">
+                        <p><b>Suhu</b> adalah besaran fisika yang menyatakan tingkat atau derajat panas suatu benda. Indra peraba (kulit) dapat merasakan panas atau dingin, namun kulit bukanlah alat ukur yang akurat. Oleh karena itu, kita memerlukan termometer.</p>
+                        
+                        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl my-4">
+                            <h4 class="font-bold text-emerald-800 mb-1">Skala Suhu Internasional</h4>
+                            <p class="text-emerald-900">Empat skala suhu utama yang dikenal di dunia adalah <b>Celcius (°C)</b>, <b>Reamur (°R)</b>, <b>Fahrenheit (°F)</b>, dan <b>Kelvin (K)</b>. Perbandingan titik tetap bawah (es melebur) dan titik tetap atas (air mendidih) adalah sebagai berikut:</p>
+                            <ul class="list-disc pl-5 mt-2 space-y-1">
+                                <li>Celcius: 0°C sampai 100°C (Rentang: 100)</li>
+                                <li>Reamur: 0°R sampai 80°R (Rentang: 80)</li>
+                                <li>Fahrenheit: 32°F sampai 212°F (Rentang: 180)</li>
+                                <li>Kelvin: 273K sampai 373K (Rentang: 100, Tanpa derajat)</li>
+                            </ul>
+                        </div>
+
+                        <h4 class="font-bold text-slate-800 text-base mt-4">Rumus Konversi Skala Suhu:</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <p class="font-semibold text-slate-700">Celcius ke Fahrenheit:</p>
+                                <p class="font-mono bg-white p-2 rounded mt-1 text-emerald-700 font-bold">t<sub>F</sub> = (9/5 × t<sub>C</sub>) + 32</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <p class="font-semibold text-slate-700">Fahrenheit ke Celcius:</p>
+                                <p class="font-mono bg-white p-2 rounded mt-1 text-emerald-700 font-bold">t<sub>C</sub> = 5/9 × (t<sub>F</sub> - 32)</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <p class="font-semibold text-slate-700">Celcius ke Reamur / Kelvin:</p>
+                                <p class="font-mono bg-white p-2 rounded mt-1 text-emerald-700 font-bold">t<sub>R</sub> = 4/5 × t<sub>C</sub> | T<sub>K</sub> = t<sub>C</sub> + 273</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <p class="font-semibold text-slate-700">Perbandingan Umum:</p>
+                                <p class="font-mono bg-white p-2 rounded mt-1 text-emerald-700 font-bold">C : R : (F - 32) = 5 : 4 : 9</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Simulasi & LKPD -->
+            <div id="student-tab-simulasi" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2"><i class="fa-solid fa-flask text-emerald-600 mr-2"></i>Simulasi Interaktif Konversi Suhu & LKPD</h3>
+                    <p class="text-xs text-slate-500 mb-6">Uji coba perpindahan nilai suhu pada berbagai termometer secara real-time.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Masukkan Nilai Suhu Celcius (°C)</label>
+                                <input type="number" id="sim-celsius" value="25" oninput="hitungSimulasi(this.value)" class="w-full px-4 py-3 rounded-xl border border-slate-300 font-bold text-lg text-emerald-700 outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                            </div>
+                            <div class="text-xs text-slate-500 space-y-1">
+                                <p>💡 <b>Tips LKPD:</b> Coba ubah nilai Celcius di atas, amati perubahan pada skala Reamur, Fahrenheit, dan Kelvin di samping!</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                <span class="text-xs font-bold text-slate-400 uppercase">Reamur (°R)</span>
+                                <div id="res-r" class="text-xl font-bold text-blue-600 mt-1">20 °R</div>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                <span class="text-xs font-bold text-slate-400 uppercase">Fahrenheit (°F)</span>
+                                <div id="res-f" class="text-xl font-bold text-orange-600 mt-1">77 °F</div>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                <span class="text-xs font-bold text-slate-400 uppercase">Kelvin (K)</span>
+                                <div id="res-k" class="text-xl font-bold text-purple-600 mt-1">298 K</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LKPD Petunjuk -->
+                    <div class="mt-6 bg-amber-50 border border-amber-200 p-5 rounded-2xl">
+                        <h4 class="font-bold text-amber-800 text-sm mb-2"><i class="fa-solid fa-file-lines mr-2"></i>Lembar Kerja Peserta Didik (LKPD) Digital Mandiri</h4>
+                        <ol class="list-decimal pl-5 text-xs text-amber-900 space-y-1">
+                            <li>Gunakan simulasi di atas untuk mencatat konversi suhu air mendidih (100°C) ke Fahrenheit dan Kelvin.</li>
+                            <li>Analisis mengapa skala Kelvin tidak menggunakan satuan derajat (°).</li>
+                            <li>Selesaikan 15 soal evaluasi pilihan ganda dan pilihan ganda kompleks dengan teliti.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Evaluasi Soal -->
+            <div id="student-tab-evaluasi" class="hidden space-y-6">
+                <div id="quiz-container" class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+                    <div id="quiz-warning" class="bg-amber-50 border border-amber-300 p-4 rounded-xl mb-6 text-amber-800 text-sm flex items-center justify-between">
+                        <span><i class="fa-solid fa-triangle-exclamation mr-2"></i> Perhatian: Anda hanya memiliki <b>1 kali kesempatan</b> mengerjakan kuis ini. Pastikan jawaban sudah benar sebelum menekan tombol Kirim.</span>
+                    </div>
+
+                    <form id="quiz-form" onsubmit="submitQuiz(event)" class="space-y-8">
+                        <div id="quiz-questions-list" class="space-y-6">
+                            <!-- Soal-soal akan dirender secara dinamis oleh JavaScript -->
+                        </div>
+
+                        <div class="pt-4 border-t flex justify-end">
+                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition">
+                                <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Jawaban Evaluasi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Hasil & Download Nilai -->
+                <div id="quiz-result-box" class="hidden bg-white rounded-2xl p-8 shadow-sm border border-slate-100 text-center space-y-4">
+                    <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl font-bold">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">Evaluasi Telah Diselesaikan!</h3>
+                    <p class="text-slate-600 text-sm">Terima kasih telah mengerjakan tugas Konversi Skala Suhu.</p>
+                    <div class="inline-block bg-emerald-50 border border-emerald-200 px-6 py-3 rounded-2xl">
+                        <span class="text-xs uppercase font-bold text-emerald-700 block">Skor Akhir Anda</span>
+                        <span id="final-score-display" class="text-4xl font-extrabold text-emerald-600">0</span>
+                    </div>
+                    <div class="pt-4 flex justify-center gap-3">
+                        <button onclick="downloadSertifikatNilai()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition shadow">
+                            <i class="fa-solid fa-download mr-2"></i> Download Bukti Nilai (PDF/Text)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD ADMIN / GURU -->
+        <section id="view-admin" class="hidden space-y-6">
+            <div class="bg-slate-800 text-white rounded-2xl p-6 shadow-lg flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold">Panel Guru / Admin MTsN 1 Kota Malang</h2>
+                    <p class="text-slate-300 text-sm mt-1">Pengelola: Siti Fatimah, S.Pd (Guru IPA Kelas 7)</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex gap-2">
+                    <button onclick="simulasiSebagaiSiswa()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium text-sm transition shadow">
+                        <i class="fa-solid fa-user-graduate mr-2"></i> Uji Coba Sebagai Siswa
+                    </button>
+                    <button onclick="bukaModalGantiPassword()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl font-medium text-sm transition">
+                        <i class="fa-solid fa-key mr-2"></i> Ganti Password
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistik & Rekap Nilai -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4">
+                <div class="flex justify-between items-center border-b pb-4">
+                    <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-users-rectangle text-emerald-600 mr-2"></i>Rekapitulasi Nilai Siswa Kelas 7</h3>
+                    <button onclick="resetDataSiswa()" class="text-red-600 hover:text-red-700 text-xs font-semibold bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition">
+                        <i class="fa-solid fa-trash mr-1"></i> Reset Data Nilai
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-100 text-slate-700 uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="p-3 rounded-l-xl">No</th>
+                                <th class="p-3">Nama Siswa</th>
+                                <th class="p-3">Kelas</th>
+                                <th class="p-3">No. Presensi</th>
+                                <th class="p-3">Skor</th>
+                                <th class="p-3">Waktu Selesai</th>
+                                <th class="p-3 rounded-r-xl text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="divide-y divide-slate-100">
+                            <!-- Render via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Ganti Password Admin -->
+    <div id="modal-password" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+            <h3 class="text-lg font-bold text-slate-800">Ganti Password Admin</h3>
+            <form onsubmit="simpanPasswordBaru(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password Baru</label>
+                    <input type="password" id="new-admin-password" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="tutupModalPassword()" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-sm font-medium">Batal</button>
+                    <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-medium shadow">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Soal 20 Soal (10 Pilihan Ganda A-B-C-D, 10 Pilihan Ganda Kompleks termasuk 5 soal perhitungan konversi suhu) sesuai Buku IPA Kelas 7 Bab III
+        const soalData = [
+            // Pilihan Ganda (1 - 10)
+            {
+                id: 1, type: "pg",
+                question: "Sebuah termometer klinis yang digunakan untuk mengukur suhu tubuh manusia umumnya memiliki rentang skala antara 30°C sampai 50°C. Alasan utama penetapan batas bawah 30°C adalah...",
+                options: [
+                    "A. Air membeku pada suhu 30°C di dalam tubuh",
+                    "B. Tidak ada manusia yang memiliki suhu tubuh normal di bawah 30°C",
+                    "C. Suhu ruangan laboratorium selalu di atas 30°C",
+                    "D. Skaca termometer akan pecah di bawah suhu 30°C"
+                ],
+                answer: 1
+            },
+            {
+                id: 2, type: "pg",
+                question: "Ketika Siti melakukan perjalanan ke luar negeri di musim dingin, termometer di stasiun kota menunjukkan angka 68°F. Jika dikonversikan ke dalam skala Celcius, berapakah besar suhu tersebut?",
+                options: [
+                    "A. 15°C",
+                    "B. 20°C",
+                    "C. 25°C",
+                    "D. 30°C"
+                ],
+                answer: 1
+            },
+            {
+                id: 3, type: "pg",
+                question: "Penetapan titik tetap atas pada skala termometer Celcius dan Reamur menggunakan acuan...",
+                options: [
+                    "A. Es murni yang sedang melebur pada tekanan 1 atmosfer",
+                    "B. Campuran air dan es batu pada wadah tertutup",
+                    "C. Air murni yang sedang mendidih pada tekanan 1 atmosfer",
+                    "D. Uap panas dari hasil pembakaran batu bara di pabrik"
+                ],
+                answer: 2
+            },
+            {
+                id: 4, type: "pg",
+                question: "Perhatikan skala mutlak dalam sistem Satuan Internasional (SI) untuk suhu. Titik nol mutlak (0 Kelvin) menyatakan kondisi di mana...",
+                options: [
+                    "A. Air mulai membeku menjadi es padat",
+                    "B. Atom-atom dan molekul dalam zat berhenti bergerak atau diam",
+                    "C. Kalor jenis suatu benda mencapai nilai maksimum",
+                    "D. Tekanan udara luar sama dengan nol atmosfer"
+                ],
+                answer: 1
+            },
+            {
+                id: 5, type: "pg",
+                question: "Budi mengukur suhu secangkir air teh hangat menggunakan termometer Reamur dan menunjukkan angka 40°R. Jika dinyatakan dalam skala Fahrenheit, berapakah nilai suhunya?",
+                options: [
+                    "A. 90°F",
+                    "B. 104°F",
+                    "C. 122°F",
+                    "D. 140°F"
+                ],
+                answer: 2
+            },
+            {
+                id: 6, type: "pg",
+                question: "Ilmuwan asal Prancis, Prof. Remi Charrel, meneliti ketahanan virus SARS-CoV-2 yang dipanaskan hingga 140°F. Berdasarkan konversi skala suhu, berapakah nilai suhu tersebut dalam skala Celcius?",
+                options: [
+                    "A. 50°C",
+                    "B. 60°C",
+                    "C. 70°C",
+                    "D. 80°C"
+                ],
+                answer: 1
+            },
+            {
+                id: 7, type: "pg",
+                question: "Mengapa indra peraba (kulit) tidak dapat dijadikan sebagai alat pengukur suhu yang akurat di laboratorium?",
+                options: [
+                    "A. Kulit hanya dapat merasakan panas tanpa satuan angka pasti",
+                    "B. Kulit manusia mudah menyerap kalor dari lingkungan",
+                    "C. Suhu kulit selalu tetap di angka 37°C dalam kondisi apapun",
+                    "D. Kulit tidak memiliki saraf penerima rangsang suhu"
+                ],
+                answer: 0
+            },
+            {
+                id: 8, type: "pg",
+                question: "Sebuah zat cair memiliki titik beku pada 0°C dan titik didih pada 80°C. Skala termometer apakah yang menggunakan rentang titik tetap tersebut?",
+                options: [
+                    "A. Celcius",
+                    "B. Fahrenheit",
+                    "C. Reamur",
+                    "D. Kelvin"
+                ],
+                answer: 2
+            },
+            {
+                id: 9, type: "pg",
+                question: "Hubungan matematis antara skala Celcius (t_C) dan skala Kelvin (T_K) yang benar sesuai standar internasional adalah...",
+                options: [
+                    "A. T_K = t_C - 273",
+                    "B. T_K = t_C + 273",
+                    "C. T_K = 5/4 × t_C",
+                    "D. T_K = 9/5 × t_C + 32"
+                ],
+                answer: 1
+            },
+            {
+                id: 10, type: "pg",
+                question: "Jika suhu suatu ruangan tercatat 300 Kelvin, berapakah suhu ruangan tersebut jika dinyatakan dalam skala Celcius?",
+                options: [
+                    "A. 15°C",
+                    "B. 25°C",
+                    "C. 27°C",
+                    "D. 35°C"
+                ],
+                answer: 1
+            },
+            // Pilihan Ganda Kompleks (11 - 20)
+            {
+                id: 11, type: "kompleks",
+                question: "Pilihlah DUA pernyataan yang benar mengenai penetapan titik acuan pada termometer berdasarkan buku teks IPA:",
+                options: [
+                    "Titik tetap bawah Celcius ditetapkan dari suhu es murni melebur pada 1 atm (0°C).",
+                    "Skala Fahrenheit menggunakan titik tetap atas air mendidih sebesar 212°F.",
+                    "Skala Kelvin menggunakan satuan derajat (°K) dalam penulisannya.",
+                    "Titik tetap atas Reamur ditetapkan sebesar 100°R."
+                ],
+                correct: [0, 1]
+            },
+            {
+                id: 12, type: "kompleks",
+                question: "Manakah DUA konversi skala suhu berikut yang bernilai setara atau sama besar?",
+                options: [
+                    "0°C setara dengan 32°F",
+                    "100°C setara dengan 80°R",
+                    "50°C setara dengan 50°R",
+                    "0°C setara dengan 273 Kelvin"
+                ],
+                correct: [0, 3]
+            },
+            {
+                id: 13, type: "kompleks",
+                question: "Pilihlah DUA alasan mengapa skala suhu internasional sangat penting dalam ilmu pengetahuan dan perdagangan global:",
+                options: [
+                    "Mencegah kesalahpahaman fatal mengenai derajat panas antarnegara.",
+                    "Mempermudah perbandingan data ilmiah di seluruh dunia.",
+                    "Memastikan bahwa semua termometer di dunia terbuat dari bahan kaca yang sama.",
+                    "Menghapuskan penggunaan termometer digital di rumah sakit."
+                ],
+                correct: [0, 1]
+            },
+            {
+                id: 14, type: "kompleks",
+                question: "Manakah DUA pernyataan yang tepat terkait sifat termometer dan rentang suhunya dalam kehidupan sehari-hari?",
+                options: [
+                    "Termometer industri memiliki skala ukur yang sangat tinggi hingga 1.000°C untuk peleburan logam.",
+                    "Termometer ruangan lemari es dirancang mampu mengukur suhu rendah di bawah 0°C untuk mencegah pertumbuhan bakteri.",
+                    "Semua termometer di dunia menggunakan air murni sebagai pengisi pipa kapilernya.",
+                    "Suhu tubuh manusia sehat selalu berada di atas 100°C."
+                ],
+                correct: [0, 1]
+            },
+            {
+                id: 15, type: "kompleks",
+                question: "Pilihlah DUA pernyataan yang benar mengenai hukum kesetimbangan suhu atau termodinamika:",
+                options: [
+                    "Suhu secara alamiah akan mengalir dari derajat yang lebih tinggi ke derajat yang lebih rendah.",
+                    "Termometer bekerja berdasarkan prinsip keseimbangan derajat suhu dengan lingkungan sekitar.",
+                    "Kalor dan suhu adalah besaran fisika yang memiliki arti dan satuan yang persis sama.",
+                    "Benda bersuhu rendah dapat mengalirkan panas secara mandiri ke benda bersuhu lebih tinggi tanpa bantuan energi luar."
+                ],
+                correct: [0, 1]
+            },
+            // Tambahan 5 Soal Pilihan Ganda Kompleks Perhitungan Konversi Skala Suhu (16 - 20)
+            {
+                id: 16, type: "kompleks",
+                question: "Pilihlah DUA hasil perhitungan konversi suhu dari Celcius ke Reamur dan Fahrenheit yang benar:",
+                options: [
+                    "Suhu 40°C setara dengan 32°R",
+                    "Suhu 60°C setara dengan 140°F",
+                    "Suhu 20°C setara dengan 36°F",
+                    "Suhu 80°C setara dengan 64°R"
+                ],
+                correct: [1, 3]
+            },
+            {
+                id: 17, type: "kompleks",
+                question: "Pilihlah DUA hasil perhitungan konversi suhu dari Fahrenheit ke Celcius yang benar:",
+                options: [
+                    "Suhu 212°F setara dengan 100°C",
+                    "Suhu 86°F setara dengan 30°C",
+                    "Suhu 50°F setara dengan 25°C",
+                    "Suhu 122°F setara dengan 45°C"
+                ],
+                correct: [0, 1]
+            },
+            {
+                id: 18, type: "kompleks",
+                question: "Pilihlah DUA hasil perhitungan konversi suhu dari Reamur ke Celcius dan Fahrenheit yang benar:",
+                options: [
+                    "Suhu 20°R setara dengan 25°C",
+                    "Suhu 40°R setara dengan 122°F",
+                    "Suhu 16°R setara dengan 20°C",
+                    "Suhu 32°R setara dengan 100°F"
+                ],
+                correct: [0, 2]
+            },
+            {
+                id: 19, type: "kompleks",
+                question: "Pilihlah DUA hasil perhitungan konversi suhu antara Celcius dan Kelvin yang benar:",
+                options: [
+                    "Suhu 27°C setara dengan 300 Kelvin",
+                    "Suhu 373 Kelvin setara dengan 100°C",
+                    "Suhu 0 Kelvin setara dengan 0°C",
+                    "Suhu 50°C setara dengan 300 Kelvin"
+                ],
+                correct: [0, 1]
+            },
+            {
+                id: 20, type: "kompleks",
+                question: "Pilihlah DUA pernyataan perhitungan konversi silang skala suhu yang bernilai benar:",
+                options: [
+                    "Suhu 86°F setara dengan 30°C dan 24°R",
+                    "Suhu 310 Kelvin setara dengan 37°C",
+                    "Suhu 50°C setara dengan 120°F",
+                    "Suhu 75°R setara dengan 93,75°C"
+                ],
+                correct: [0, 1]
+            }
+        ];
+
+        let currentUser = null;
+        let adminPasswordStorage = localStorage.getItem('admin_pass') || 'mtsn1malang';
+
+        // Inisialisasi Aplikasi
+        window.onload = function() {
+            renderQuizQuestions();
+            cekSesiAktif();
+        };
+
+        function switchLoginTab(role) {
+            const btnSiswa = document.getElementById('tab-btn-siswa');
+            const btnAdmin = document.getElementById('tab-btn-admin');
+            const formSiswa = document.getElementById('form-login-siswa');
+            const formAdmin = document.getElementById('form-login-admin');
+
+            if(role === 'siswa') {
+                btnSiswa.className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-emerald-700 shadow transition";
+                btnAdmin.className = "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-500 transition";
+                formSiswa.classList.remove('hidden');
+                formAdmin.classList.add('hidden');
+            } else {
+                btnAdmin.className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-slate-800 shadow transition";
+                btnSiswa.className = "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-500 transition";
+                formAdmin.classList.remove('hidden');
+                formSiswa.classList.add('hidden');
+            }
+        }
+
+        function handleLoginSiswa(e) {
+            e.preventDefault();
+            const nama = document.getElementById('siswa-nama').value.trim();
+            const kelas = document.getElementById('siswa-kelas').value;
+            const presensi = document.getElementById('siswa-password').value.trim();
+
+            if(!nama || !kelas || !presensi) return;
+
+            // Cek apakah sudah pernah mengerjakan sebelumnya
+            const riwayat = JSON.parse(localStorage.getItem('riwayat_siswa') || '{}');
+            const keyUser = `${nama}_${kelas}`;
+
+            currentUser = { role: 'siswa', nama, kelas, presensi, keyUser };
+            
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-siswa').classList.remove('hidden');
+            document.getElementById('nav-user-info').classList.remove('hidden');
+            document.getElementById('nav-username').innerText = `${nama} (${kelas})`;
+            document.getElementById('welcome-name').innerText = nama;
+            document.getElementById('welcome-class').innerText = kelas;
+
+            if(riwayat[keyUser]) {
+                // Sudah pernah mengerjakan
+                document.getElementById('quiz-form').classList.add('hidden');
+                document.getElementById('quiz-warning').innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i> Anda sudah menyelesaikan evaluasi ini dengan skor: <b>${riwayat[keyUser].score}</b>`;
+                document.getElementById('quiz-result-box').classList.remove('hidden');
+                document.getElementById('final-score-display').innerText = riwayat[keyUser].score;
+            }
+        }
+
+        function handleLoginAdmin(e) {
+            e.preventDefault();
+            const u = document.getElementById('admin-username').value;
+            const p = document.getElementById('admin-password').value;
+
+            if(u === 'admin' && p === adminPasswordStorage) {
+                currentUser = { role: 'admin' };
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('view-admin').classList.remove('hidden');
+                document.getElementById('nav-user-info').classList.remove('hidden');
+                document.getElementById('nav-username').innerText = 'Admin / Guru (Siti Fatimah, S.Pd)';
+                renderAdminTable();
+            } else {
+                alert('Username atau Password Admin salah!');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('view-login').classList.remove('hidden');
+            document.getElementById('view-siswa').classList.add('hidden');
+            document.getElementById('view-admin').classList.add('hidden');
+            document.getElementById('nav-user-info').classList.add('hidden');
+            document.getElementById('quiz-form').reset();
+            document.getElementById('quiz-form').classList.remove('hidden');
+            document.getElementById('quiz-result-box').classList.add('hidden');
+        }
+
+        function switchStudentTab(tab) {
+            document.getElementById('student-tab-materi').classList.add('hidden');
+            document.getElementById('student-tab-simulasi').classList.add('hidden');
+            document.getElementById('student-tab-evaluasi').classList.add('hidden');
+
+            const btns = document.querySelectorAll('.student-nav-btn');
+            btns.forEach(b => {
+                b.className = "student-nav-btn bg-emerald-800/60 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-medium text-sm transition";
+            });
+
+            document.getElementById(`student-tab-${tab}`).classList.remove('hidden');
+            event.currentTarget.className = "student-nav-btn bg-white text-emerald-700 px-4 py-2 rounded-xl font-medium text-sm shadow transition active-tab";
+        }
+
+        // Simulasi Kalkulator Suhu
+        function hitungSimulasi(val) {
+            const c = parseFloat(val) || 0;
+            const r = (4/5) * c;
+            const f = (9/5) * c + 32;
+            const k = c + 273;
+
+            document.getElementById('res-r').innerText = r.toFixed(1) + " °R";
+            document.getElementById('res-f').innerText = f.toFixed(1) + " °F";
+            document.getElementById('res-k').innerText = k.toFixed(1) + " K";
+        }
+
+        // Render Soal Quiz
+        function renderQuizQuestions() {
+            const container = document.getElementById('quiz-questions-list');
+            let html = '';
+
+            soalData.forEach((s, index) => {
+                html += `<div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">`;
+                html += `<p class="font-semibold text-slate-800 text-sm"><span>${index + 1}.</span> ${s.question}</p>`;
+
+                if(s.type === 'pg') {
+                    html += `<div class="space-y-2 pl-2">`;
+                    s.options.forEach((opt, optIdx) => {
+                        html += `<label class="flex items-center space-x-3 text-sm text-slate-700 cursor-pointer hover:bg-white p-2 rounded-lg transition">
+                            <input type="radio" name="q_${s.id}" value="${optIdx}" required class="text-emerald-600 focus:ring-emerald-500">
+                            <span>${opt}</span>
+                        </label>`;
+                    });
+                    html += `</div>`;
+                } else if(s.type === 'kompleks') {
+                    html += `<p class="text-xs text-emerald-700 font-medium italic"><i class="fa-solid fa-circle-info mr-1"></i> Pilih dua jawaban yang benar.</p>`;
+                    html += `<div class="space-y-2 pl-2">`;
+                    s.options.forEach((opt, optIdx) => {
+                        html += `<label class="flex items-center space-x-3 text-sm text-slate-700 cursor-pointer hover:bg-white p-2 rounded-lg transition">
+                            <input type="checkbox" name="q_${s.id}" value="${optIdx}" class="text-emerald-600 rounded focus:ring-emerald-500">
+                            <span>${opt}</span>
+                        </label>`;
+                    });
+                    html += `</div>`;
+                }
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Submit Quiz
+        function submitQuiz(e) {
+            e.preventDefault();
+            let score = 0;
+            const totalSoal = soalData.length; // sekarang 20 soal
+            const detailJawaban = {};
+
+            soalData.forEach(s => {
+                if(s.type === 'pg') {
+                    const selected = document.querySelector(`input[name="q_${s.id}"]:checked`);
+                    if(selected && parseInt(selected.value) === s.answer) {
+                        score += (100 / totalSoal);
+                    }
+                } else if(s.type === 'kompleks') {
+                    const checked = document.querySelectorAll(`input[name="q_${s.id}"]:checked`);
+                    const checkedValues = Array.from(checked).map(c => parseInt(c.value));
+                    
+                    if(checkedValues.length === s.correct.length && s.correct.every(val => checkedValues.includes(val))) {
+                        score += (100 / totalSoal);
+                    }
+                }
+            });
+
+            const finalScore = Math.round(score);
+
+            // Simpan ke localStorage
+            const riwayat = JSON.parse(localStorage.getItem('riwayat_siswa') || '{}');
+            riwayat[currentUser.keyUser] = {
+                nama: currentUser.nama,
+                kelas: currentUser.kelas,
+                presensi: currentUser.presensi,
+                score: finalScore,
+                time: new Date().toLocaleString()
+            };
+            localStorage.setItem('riwayat_siswa', JSON.stringify(riwayat));
+
+            // Tampilkan hasil
+            document.getElementById('quiz-form').classList.add('hidden');
+            document.getElementById('quiz-warning').classList.add('hidden');
+            document.getElementById('quiz-result-box').classList.remove('hidden');
+            document.getElementById('final-score-display').innerText = finalScore;
+        }
+
+        function downloadSertifikatNilai() {
+            const riwayat = JSON.parse(localStorage.getItem('riwayat_siswa') || '{}');
+            const data = riwayat[currentUser.keyUser];
+            if(!data) return;
+
+            const textContent = `=== BUKTI PENYELESAIAN EVALUASI IPA KELAS 7 ===\n` +
+                                `Mata Pelajaran : Ilmu Pengetahuan Alam (IPA)\n` +
+                                `Materi : Konversi Skala Suhu\n` +
+                                `Guru Pengampu : Siti Fatimah, S.Pd (MTsN 1 Kota Malang)\n` +
+                                `--------------------------------------------------\n` +
+                                `Nama Siswa : ${data.nama}\n` +
+                                `Kelas      : ${data.kelas}\n` +
+                                `No Presensi: ${data.presensi}\n` +
+                                `Skor Akhir : ${data.score} / 100\n` +
+                                `Waktu Ujian: ${data.time}\n` +
+                                `--------------------------------------------------\n` +
+                                `Status     : LULUS / SELESAI\n`;
+
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Sertifikat_Nilai_Suhu_${data.nama.replace(/\s+/g, '_')}.txt`;
+            a.click();
+        }
+
+        // Admin Functions
+        function renderAdminTable() {
+            const tbody = document.getElementById('admin-table-body');
+            const riwayat = JSON.parse(localStorage.getItem('riwayat_siswa') || '{}');
+            const keys = Object.keys(riwayat);
+
+            if(keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Belum ada data siswa yang mengerjakan.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            keys.forEach((k, idx) => {
+                const d = riwayat[k];
+                html += `<tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-medium">${idx + 1}</td>
+                    <td class="p-3 font-semibold text-slate-800">${d.nama}</td>
+                    <td class="p-3">${d.kelas}</td>
+                    <td class="p-3">${d.presensi}</td>
+                    <td class="p-3 font-bold text-emerald-600">${d.score}</td>
+                    <td class="p-3 text-xs text-slate-500">${d.time}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="hapusDataSiswa('${k}')" class="bg-red-50 text-red-600 hover:bg-red-100 p-2 rounded-lg text-xs transition" title="Hapus / Reset Kesempatan Siswa">
+                            <i class="fa-solid fa-rotate-right"></i> Reset
+                        </button>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function hapusDataSiswa(key) {
+            if(confirm('Apakah Anda yakin ingin mereset data siswa ini agar dapat mengerjakan kembali?')) {
+                const riwayat = JSON.parse(localStorage.getItem('riwayat_siswa') || '{}');
+                delete riwayat[key];
+                localStorage.setItem('riwayat_siswa', JSON.stringify(riwayat));
+                renderAdminTable();
+            }
+        }
+
+        function resetDataSiswa() {
+            if(confirm('PERINGATAN: Semua riwayat nilai siswa akan dihapus permanen! Lanjutkan?')) {
+                localStorage.removeItem('riwayat_siswa');
+                renderAdminTable();
+            }
+        }
+
+        function simulasiSebagaiSiswa() {
+            // Simulasi seolah-olah sebagai siswa demo
+            currentUser = { role: 'siswa', nama: 'Siti Fatimah (Uji Coba Guru)', kelas: 'VII A', presensi: '00', keyUser: 'UjiCoba_VIIA' };
+            document.getElementById('view-admin').classList.add('hidden');
+            document.getElementById('view-siswa').classList.remove('hidden');
+            document.getElementById('nav-user-info').classList.remove('hidden');
+            document.getElementById('nav-username').innerText = `${currentUser.nama} (${currentUser.kelas})`;
+            document.getElementById('welcome-name').innerText = currentUser.nama;
+            document.getElementById('welcome-class').innerText = currentUser.kelas;
+        }
+
+        function bukaModalGantiPassword() {
+            document.getElementById('modal-password').classList.remove('hidden');
+        }
+
+        function tutupModalPassword() {
+            document.getElementById('modal-password').classList.add('hidden');
+        }
+
+        function simpanPasswordBaru(e) {
+            e.preventDefault();
+            const pBaru = document.getElementById('new-admin-password').value;
+            if(pBaru) {
+                adminPasswordStorage = pBaru;
+                localStorage.setItem('admin_pass', pBaru);
+                alert('Password admin berhasil diperbarui!');
+                tutupModalPassword();
+            }
+        }
+
+        function cekSesiAktif() {
+            // Auto check
+        }
+    </script>
+</body>
+</html>
